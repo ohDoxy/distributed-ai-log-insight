@@ -1,11 +1,16 @@
-from pydantic import BaseModel
+from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import datetime
 
-# data model for a single entry
-class LogEntry(BaseModel):
-    timestamp: datetime # when
-    source_ip: str # where the event came from
-    event_type: str # what type of event (i.e "login_failure")
+# data model for a single post log entry
+# create a table named logentry
+class LogEntryCreate(SQLModel):
+    timestamp: datetime # a column named timestamp
+    source_ip: str # ..etc
+    event_type: str
     message: str
-    severity: Optional[str] = "info" # optional flag (warning, critical)
+    severity: Optional[str] = "info"
+
+# used for database model + response
+class LogEntry(LogEntryCreate, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
